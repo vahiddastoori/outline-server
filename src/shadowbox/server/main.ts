@@ -172,13 +172,14 @@ async function main() {
   const prometheusConfigFilename = getPersistentFilename('prometheus/config.yml');
   const prometheusTsdbFilename = getPersistentFilename('prometheus/data');
   const prometheusEndpoint = `http://${prometheusLocation}`;
+  const prometheusTsdbRetention = process.env.SB_TSDB_RETENTION || '31d'
   const prometheusBinary = getBinaryFilename('prometheus');
   const prometheusArgs = [
     '--config.file',
     prometheusConfigFilename,
     '--web.enable-admin-api',
     '--storage.tsdb.retention.time',
-    '31d',
+    prometheusTsdbRetention,
     '--storage.tsdb.path',
     prometheusTsdbFilename,
     '--web.listen-address',
