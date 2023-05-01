@@ -85,8 +85,8 @@ export interface UsageMetrics {
 
 // Reads data usage metrics from Prometheus.
 export class PrometheusUsageMetrics implements UsageMetrics {
-  const now = new Date();
-  private resetTimeMs: number = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 60);
+  private now = new Date();
+  private resetTimeMs: number = new Date(this.now.getFullYear(), this.now.getMonth(), this.now.getDate() - 60);
 
   constructor(private prometheusClient: PrometheusClient) {}
 
