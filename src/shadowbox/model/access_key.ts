@@ -31,9 +31,7 @@ export interface ProxyParams {
 export interface DataLimit {
   readonly bytes: number;
 }
-export interface DataUsage {
-  readonly bytes: number;
-}
+
 // AccessKey is what admins work with. It gives ProxyParams a name and identity.
 export interface AccessKey {
   // The unique identifier for this access key.
@@ -46,7 +44,6 @@ export interface AccessKey {
   readonly proxyParams: ProxyParams;
   // Whether the access key has exceeded the data transfer limit.
   readonly isOverDataLimit: boolean;
-  readonly dataUsage: DataUsage ;
   // The key's current data limit.  If it exists, it overrides the server default data limit.
   readonly dataLimit?: DataLimit;
 }
