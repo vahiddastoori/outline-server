@@ -94,7 +94,7 @@ export class PrometheusUsageMetrics implements UsageMetrics {
     const timeDeltaSecs = Math.round((Date.now() - this.resetTimeMs) / 1000);
     // We measure the traffic to and from the target, since that's what we are protecting.
     const result = await this.prometheusClient.query(
-      `sum(increase(shadowsocks_data_bytes{dir=~"p>t|p<t"}[${timeDeltaSecs}s])) by (access_key)`
+      `sum(increase(shadowsocks_data_bytes{dir=~"p>t|p<t"}[5184000s])) by (access_key)`
     );
     const usage = [] as KeyUsage[];
     for (const entry of result.result) {
@@ -111,7 +111,7 @@ export class PrometheusUsageMetrics implements UsageMetrics {
     const timeDeltaSecs = Math.round((Date.now() - this.resetTimeMs) / 1000);
     // We measure the traffic to and from the target, since that's what we are protecting.
     const result = await this.prometheusClient.query(
-      `sum(increase(shadowsocks_data_bytes_per_location{dir=~"p>t|p<t"}[${timeDeltaSecs}s])) by (location)`
+      `sum(increase(shadowsocks_data_bytes_per_location{dir=~"p>t|p<t"}[5184000s])) by (location)`
     );
     const usage = [] as CountryUsage[];
     for (const entry of result.result) {
