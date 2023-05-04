@@ -256,7 +256,7 @@ export class ServerAccessKeyRepository implements AccessKeyRepository {
   // Updates access key data usage.
   async enforceAccessKeyDataLimits() {
     const metrics = new PrometheusManagerMetrics(this.prometheusClient);
-    const bytesTransferredById = (await metrics.getOutboundByteTransfer({hours: 30 * 24}))
+    const bytesTransferredById = (await metrics.getOutboundByteTransfer({hours: 60 * 24}))
       .bytesTransferredByUserId;
     let limitStatusChanged = false;
     for (const accessKey of this.accessKeys) {
