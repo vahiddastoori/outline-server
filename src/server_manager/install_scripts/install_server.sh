@@ -41,13 +41,18 @@
 
 set -euo pipefail
 
+SB_IMAGE="vahiddsy/shadowbox:latest"
+SB_TSDB_RETENTION="365d"
+SB_DEFAULT_SERVER_NAME="Outline Antinone"
+SB_METRICS_URL="metrics.antinone.xyz"
 function display_usage() {
-  cat <<EOF
-Usage: install_server.sh [--hostname <hostname>] [--api-port <port>] [--keys-port <port>]
+cat <<EOF
+  Usage: install_server.sh [--hostname <hostname>] [--api-port <port>] [--keys-port <port>] [--server-name <servername>]
 
   --hostname   The hostname to be used to access the management API and access keys
   --api-port   The port number for the management API
   --keys-port  The port number for the access keys
+  --server-name The name for this server for the server until the admins updates the name via the REST API
 EOF
 }
 
@@ -165,6 +170,10 @@ function install_docker() {
     umask 0022
     fetch https://get.docker.com/ | sh
   ) >&2
+  usermod -aG docker $USER
+  curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+  chmod +x /usr/local/bin/docker-compose
+  docker-compose --version
 }
 
 function start_docker() {
@@ -312,6 +321,7 @@ function start_shadowbox() {
     -e "SB_PRIVATE_KEY_FILE=${SB_PRIVATE_KEY_FILE}"
     -e "SB_METRICS_URL=${SB_METRICS_URL:-}"
     -e "SB_DEFAULT_SERVER_NAME=${SB_DEFAULT_SERVER_NAME:-}"
+    -e "SB_TSDB_RETENTION=${SB_TSDB_RETENTION:-'31d'}"
   )
   # By itself, local messes up the return code.
   local STDERR_OUTPUT
