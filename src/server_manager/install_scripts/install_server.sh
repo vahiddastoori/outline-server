@@ -320,7 +320,7 @@ function start_shadowbox() {
     -e "SB_CERTIFICATE_FILE=${SB_CERTIFICATE_FILE}"
     -e "SB_PRIVATE_KEY_FILE=${SB_PRIVATE_KEY_FILE}"
     -e "SB_METRICS_URL=${SB_METRICS_URL:-}"
-    -e "SB_DEFAULT_SERVER_NAME=${SB_DEFAULT_SERVER_NAME:-}"
+    -e "SB_DEFAULT_SERVER_NAME=${FLAGS_SERVER_NAME:-}"
     -e "SB_TSDB_RETENTION=${SB_TSDB_RETENTION:-'31d'}"
   )
   # By itself, local messes up the return code.
@@ -520,7 +520,7 @@ function is_valid_port() {
 
 function parse_flags() {
   local params
-  params="$(getopt --longoptions hostname:,api-port:,keys-port: -n "$0" -- "$0" "$@")"
+  params="$(getopt --longoptions hostname:,api-port:,keys-port:,server-name: -n "$0" -- "$0" "$@")"
   eval set -- "${params}"
 
   while (( $# > 0 )); do
@@ -544,6 +544,14 @@ function parse_flags() {
         shift
         if ! is_valid_port "${FLAGS_KEYS_PORT}"; then
           log_error "Invalid value for ${flag}: ${FLAGS_KEYS_PORT}" >&2
+          exit 1
+        fi
+        ;;
+      --server-name)
+        FLAGS_SERVER_NAME=$1
+        shift
+        if ! is_valid_port "${FLAGS_SERVER_NAME}"; then
+          log_error "Invalid value for ${flag}: ${FLAGS_SERVER_NAME}" >&2
           exit 1
         fi
         ;;
