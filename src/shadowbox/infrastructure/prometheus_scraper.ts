@@ -129,8 +129,15 @@ async function waitForPrometheusReady(prometheusEndpoint: string) {
 
 function isHttpEndpointHealthy(endpoint: string): Promise<boolean> {
   return new Promise((resolve, _) => {
+    const authHeader = `Basic ${Buffer.from(`admin:admin`).toString('base64')}`;
+
+    const options = {
+      headers: {
+        'Authorization': authHeader,
+      },
+    };
     http
-      .get(endpoint, (response) => {
+      .get(endpoint, options, (response) => {
         resolve(response.statusCode >= 200 && response.statusCode < 300);
       })
       .on('error', () => {
