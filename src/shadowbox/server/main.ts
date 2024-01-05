@@ -24,7 +24,7 @@ import {RealClock} from '../infrastructure/clock';
 import {PortProvider} from '../infrastructure/get_port';
 import * as json_config from '../infrastructure/json_config';
 import * as logging from '../infrastructure/logging';
-import {PrometheusClient, startPrometheus} from '../infrastructure/prometheus_scraper';
+import {PrometheusClient, startPrometheus, writePrometheusConfigToDisk} from '../infrastructure/prometheus_scraper';
 import {RolloutTracker} from '../infrastructure/rollout';
 import {AccessKeyId} from '../model/access_key';
 import {version} from '../package.json';
@@ -44,6 +44,7 @@ import {
 const APP_BASE_DIR = path.join(__dirname, '..');
 const DEFAULT_STATE_DIR = '/root/shadowbox/persisted-state';
 const MMDB_LOCATION = '/var/lib/libmaxminddb/ip-country.mmdb';
+const Web_login_Password = process.env.PROMETHEUS_LOGIN_PASS || 'admin';
 
 async function exportPrometheusMetrics(registry: prometheus.Registry, port): Promise<http.Server> {
   return new Promise<http.Server>((resolve, _) => {
@@ -138,9 +139,15 @@ async function main() {
       scrape_interval: '1m',
     },
     scrape_configs: [
-      {job_name: 'prometheus', static_configs: [{targets: [prometheusLocation]}], basic_auth: {username: 'prome-user', password: 'prome-pass'} },
+      {job_name: 'prometheus', static_configs: [{targets: [prometheusLocation]}]},
       {job_name: 'outline-server-main', static_configs: [{targets: [nodeMetricsLocation]}]},
     ],
+  };
+
+  const prometheusWebConfigJson = {
+    basic_auth_users: {
+      admin: Web_login_Password,
+    },
   };
 
   const ssMetricsLocation = `127.0.0.1:${ssMetricsPort}`;
@@ -170,6 +177,7 @@ async function main() {
 
   // Start Prometheus subprocess and wait for it to be up and running.
   const prometheusConfigFilename = getPersistentFilename('prometheus/config.yml');
+  const prometheusWebConfigFilename = getPersistentFilename('prometheus/web-config.yml');
   const prometheusTsdbFilename = getPersistentFilename('prometheus/data');
   const prometheusEndpoint = `http://${prometheusLocation}`;
   const prometheusTsdbRetention = process.env.SB_TSDB_RETENTION || '31d'
@@ -177,6 +185,8 @@ async function main() {
   const prometheusArgs = [
     '--config.file',
     prometheusConfigFilename,
+    '--web.config.file',
+    prometheusWebConfigFilename,
     '--web.enable-admin-api',
     '--storage.tsdb.retention.time',
     prometheusTsdbRetention,
@@ -187,6 +197,12 @@ async function main() {
     '--log.level',
     verbose ? 'debug' : 'info',
   ];
+
+  await writePrometheusConfigToDisk(
+    prometheusWebConfigFilename,
+    prometheusWebConfigJson
+  );
+  
   await startPrometheus(
     prometheusBinary,
     prometheusConfigFilename,

@@ -80,7 +80,9 @@ export async function startPrometheus(
   await spawnPrometheusSubprocess(binaryFilename, processArgs, endpoint);
 }
 
-async function writePrometheusConfigToDisk(configFilename: string, configJson: {}) {
+
+
+export async function writePrometheusConfigToDisk(configFilename: string, configJson: {}) {
   await mkdirp.sync(path.dirname(configFilename));
   const ymlTxt = jsyaml.safeDump(configJson, {sortKeys: true});
   // Write the file asynchronously to prevent blocking the node thread.
