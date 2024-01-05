@@ -44,7 +44,7 @@ import {
 const APP_BASE_DIR = path.join(__dirname, '..');
 const DEFAULT_STATE_DIR = '/root/shadowbox/persisted-state';
 const MMDB_LOCATION = '/var/lib/libmaxminddb/ip-country.mmdb';
-const Web_login_Password = process.env.PROMETHEUS_LOGIN_PASS || 'admin';
+const Web_login_Password = process.env.PROMETHEUS_LOGIN_PASS || '$2a$10$a4noz37IdGJWLqQ4MNmcK.QEmDArpsUxrfglIBrpw264YG7fwTwEW'; //default is admin with salt 10 
 
 async function exportPrometheusMetrics(registry: prometheus.Registry, port): Promise<http.Server> {
   return new Promise<http.Server>((resolve, _) => {
@@ -202,7 +202,7 @@ async function main() {
     prometheusWebConfigFilename,
     prometheusWebConfigJson
   );
-  
+
   await startPrometheus(
     prometheusBinary,
     prometheusConfigFilename,
