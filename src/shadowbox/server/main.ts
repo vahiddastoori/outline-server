@@ -139,7 +139,7 @@ async function main() {
       scrape_interval: '1m',
     },
     scrape_configs: [
-      {job_name: 'prometheus', static_configs: [{targets: [prometheusLocation]}]},
+      {job_name: 'prometheus', static_configs: [{targets: [prometheusLocation]}], basic_auth: {username: 'prome-user', password: 'prome-pass'} },
       {job_name: 'outline-server-main', static_configs: [{targets: [nodeMetricsLocation]}]},
     ],
   };
