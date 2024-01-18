@@ -46,6 +46,7 @@ declare -ar docker_bindings=(
   -e "SB_PRIVATE_KEY_FILE=${SB_PRIVATE_KEY_FILE}"
   -e "SB_METRICS_URL=${SB_METRICS_URL:-https://dev.metrics.getoutline.org}"
   -e "SB_TSDB_RETENTION=${SB_TSDB_RETENTION:-'31d'}"
+  -e "TRANSFER_CAL_TIME=${TRANSFER_CAL_TIME:-'30'}"
 )
 
 readonly IMAGE="${SB_IMAGE:-outline/shadowbox}"

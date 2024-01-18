@@ -88,7 +88,7 @@ export interface UsageMetrics {
 export class PrometheusUsageMetrics implements UsageMetrics {
   
   private now = new Date();
-  private resetTimeMs: number = +new Date(this.now.getFullYear(), this.now.getMonth(), this.now.getDate() - this.TransferCalculationTimeFrame);
+  private resetTimeMs: number = +new Date(this.now.getFullYear(), this.now.getMonth(), this.now.getDate() - TransferCalculationTimeFrame);
 
   constructor(private prometheusClient: PrometheusClient) {}
 
