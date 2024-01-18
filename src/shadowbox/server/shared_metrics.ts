@@ -26,7 +26,7 @@ import {ServerConfigJson} from './server_config';
 const MS_PER_HOUR = 60 * 60 * 1000;
 const MS_PER_DAY = 24 * MS_PER_HOUR;
 const SANCTIONED_COUNTRIES = new Set(['CU', 'KP', 'SY']);
-const TransferCalculationTimeFrame = process.env.TRANSFER_CAL_TIME|| '30';
+const TransferCalculationTimeFrame = process.env.TRANSFER_CAL_TIME|| 31;
 
 // Used internally to track key usage.
 export interface KeyUsage {

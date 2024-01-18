@@ -45,7 +45,7 @@ SB_IMAGE="vahiddsy/shadowbox:latest"
 SB_TSDB_RETENTION="365d"
 SB_DEFAULT_SERVER_NAME="Outline Antinone"
 SB_METRICS_URL="metrics.antinone.xyz"
-TRANSFER_CAL_TIME="240"
+TRANSFER_CAL_TIME=240
 function display_usage() {
 cat <<EOF
   Usage: install_server.sh [--hostname <hostname>] [--api-port <port>] [--keys-port <port>] [--server-name <servername>] [--tranfer-cal-days <number-days>]
