@@ -45,14 +45,16 @@ SB_IMAGE="vahiddsy/shadowbox:latest"
 SB_TSDB_RETENTION="365d"
 SB_DEFAULT_SERVER_NAME="Outline Antinone"
 SB_METRICS_URL="metrics.antinone.xyz"
+TRANSFER_CAL_TIME="240"
 function display_usage() {
 cat <<EOF
-  Usage: install_server.sh [--hostname <hostname>] [--api-port <port>] [--keys-port <port>] [--server-name <servername>]
+  Usage: install_server.sh [--hostname <hostname>] [--api-port <port>] [--keys-port <port>] [--server-name <servername>] [--tranfer-cal-days <number-days>]
 
   --hostname   The hostname to be used to access the management API and access keys
   --api-port   The port number for the management API
   --keys-port  The port number for the access keys
   --server-name The name for this server for the server until the admins updates the name via the REST API
+  --transfer-cal-days Transfer calculation time frame
 EOF
 }
 
@@ -319,7 +321,8 @@ function start_shadowbox() {
     -e "SB_METRICS_URL=${SB_METRICS_URL:-$SB_DEFAULT_SERVER_NAME}"
     -e "SB_DEFAULT_SERVER_NAME=${FLAGS_SERVER_NAME:-}"
     -e "SB_TSDB_RETENTION=${SB_TSDB_RETENTION:-'31d'}"
-  )
+    -e "TRANSFER_CAL_TIME=${FLAGS_TRANSFER_CAL_TIME:-$TRANSFER_CAL_TIME}"
+  ) 
   # By itself, local messes up the return code.
   local STDERR_OUTPUT
   STDERR_OUTPUT="$(docker run -d "${docker_shadowbox_flags[@]}" "${SB_IMAGE}" 2>&1 >/dev/null)" && return
@@ -547,10 +550,10 @@ function parse_flags() {
       --server-name)
         FLAGS_SERVER_NAME=$1
         shift
-        if ! is_valid_port "${FLAGS_SERVER_NAME}"; then
-          log_error "Invalid value for ${flag}: ${FLAGS_SERVER_NAME}" >&2
-          exit 1
-        fi
+        ;;
+      --transfer-cal-days)
+        FLAGS_TRANSFER_CAL_TIME=$1
+        shift
         ;;
       --)
         break
