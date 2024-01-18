@@ -26,6 +26,7 @@ import {ServerConfigJson} from './server_config';
 const MS_PER_HOUR = 60 * 60 * 1000;
 const MS_PER_DAY = 24 * MS_PER_HOUR;
 const SANCTIONED_COUNTRIES = new Set(['CU', 'KP', 'SY']);
+const TransferCalculationTimeFrame = process.env.TRANSFER_CAL_TIME|| '30';
 
 // Used internally to track key usage.
 export interface KeyUsage {
@@ -85,8 +86,9 @@ export interface UsageMetrics {
 
 // Reads data usage metrics from Prometheus.
 export class PrometheusUsageMetrics implements UsageMetrics {
+  
   private now = new Date();
-  private resetTimeMs: number = +new Date(this.now.getFullYear(), this.now.getMonth(), this.now.getDate() - 60);
+  private resetTimeMs: number = +new Date(this.now.getFullYear(), this.now.getMonth(), this.now.getDate() - this.TransferCalculationTimeFrame);
 
   constructor(private prometheusClient: PrometheusClient) {}
 
@@ -94,7 +96,7 @@ export class PrometheusUsageMetrics implements UsageMetrics {
     const timeDeltaSecs = Math.round((Date.now() - this.resetTimeMs) / 1000);
     // We measure the traffic to and from the target, since that's what we are protecting.
     const result = await this.prometheusClient.query(
-      `sum(increase(shadowsocks_data_bytes{dir=~"p>t|p<t"}[5184000s])) by (access_key)`
+      `sum(increase(shadowsocks_data_bytes{dir=~"p>t|p<t"}[${timeDeltaSecs}s])) by (access_key)`
     );
     const usage = [] as KeyUsage[];
     for (const entry of result.result) {
@@ -111,7 +113,7 @@ export class PrometheusUsageMetrics implements UsageMetrics {
     const timeDeltaSecs = Math.round((Date.now() - this.resetTimeMs) / 1000);
     // We measure the traffic to and from the target, since that's what we are protecting.
     const result = await this.prometheusClient.query(
-      `sum(increase(shadowsocks_data_bytes_per_location{dir=~"p>t|p<t"}[5184000s])) by (location)`
+      `sum(increase(shadowsocks_data_bytes_per_location{dir=~"p>t|p<t"}[${timeDeltaSecs}s])) by (location)`
     );
     const usage = [] as CountryUsage[];
     for (const entry of result.result) {

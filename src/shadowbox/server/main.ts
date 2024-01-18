@@ -172,7 +172,7 @@ async function main() {
   const prometheusConfigFilename = getPersistentFilename('prometheus/config.yml');
   const prometheusTsdbFilename = getPersistentFilename('prometheus/data');
   const prometheusEndpoint = `http://${prometheusLocation}`;
-  const prometheusTsdbRetention = process.env.SB_TSDB_RETENTION || '31d'
+  const prometheusTsdbRetention = process.env.SB_TSDB_RETENTION || '31d';
   const prometheusBinary = getBinaryFilename('prometheus');
   const prometheusArgs = [
     '--config.file',
