@@ -520,7 +520,7 @@ function is_valid_port() {
 
 function parse_flags() {
   local params
-  params="$(getopt --longoptions hostname:,api-port:,keys-port:,server-name: -n "$0" -- "$0" "$@")"
+  params="$(getopt --longoptions hostname:,api-port:,keys-port:,server-name:,transfer-cal-days: -n "$0" -- "$0" "$@")"
   eval set -- "${params}"
 
   while (( $# > 0 )); do
